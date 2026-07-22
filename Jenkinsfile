@@ -40,6 +40,32 @@ pipeline {
         }
 
         // -----------------------------------------------
+        // ÉTAPE 3 : Analyse qualité avec SonarQube
+        // -----------------------------------------------
+        stage('SonarQube Analysis') {
+            steps {
+                echo '🔍 Analyse de la qualité du code avec SonarQube...'
+                dir('JOCL-BackEnd') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh './mvnw sonar:sonar -Dsonar.projectKey=JOCL -Dsonar.projectName=JOCL -Dsonar.host.url=http://sonarqube:9000'
+                    }
+                }
+            }
+        }
+
+        // -----------------------------------------------
+        // ÉTAPE 4 : Vérifier le Quality Gate
+        // -----------------------------------------------
+        stage('Quality Gate') {
+            steps {
+                echo '🚦 Vérification du Quality Gate...'
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        // -----------------------------------------------
         // ÉTAPE 3 : Construire l'image Docker du backend
         // -----------------------------------------------
         stage('Docker Build Backend') {
