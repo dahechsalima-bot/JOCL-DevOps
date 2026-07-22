@@ -1,6 +1,6 @@
 // ================================================
 // Jenkinsfile — Pipeline CI/CD pour JOCL
-// Jenkins tourne sur Linux (conteneur Docker)
+// Utilise mvnw (Maven Wrapper) inclus dans le projet
 // ================================================
 
 pipeline {
@@ -27,12 +27,14 @@ pipeline {
 
         // -----------------------------------------------
         // ÉTAPE 2 : Compiler le backend Java (créer le .jar)
+        // Utilise ./mvnw (Maven Wrapper inclus dans le projet)
         // -----------------------------------------------
         stage('Build Backend') {
             steps {
                 echo '🔨 Compilation du backend Spring Boot...'
                 dir('JOCL-BackEnd') {
-                    sh 'mvn clean package -DskipTests'
+                    sh 'chmod +x mvnw'
+                    sh './mvnw clean package -DskipTests'
                 }
             }
         }
