@@ -1,14 +1,12 @@
 // ================================================
 // Jenkinsfile — Pipeline CI/CD pour JOCL
-// Ce fichier automatise : build → test → docker
+// Jenkins tourne sur Linux (conteneur Docker)
 // ================================================
 
 pipeline {
 
-    // Lance le pipeline sur n'importe quel agent disponible
     agent any
 
-    // Variables réutilisables dans tout le pipeline
     environment {
         BACKEND_IMAGE  = 'jocl-backend'
         FRONTEND_IMAGE = 'jocl-frontend'
@@ -34,7 +32,7 @@ pipeline {
             steps {
                 echo '🔨 Compilation du backend Spring Boot...'
                 dir('JOCL-BackEnd') {
-                    bat 'mvn clean package -DskipTests'
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
@@ -46,7 +44,7 @@ pipeline {
             steps {
                 echo '🐳 Construction de l\'image Docker Backend...'
                 dir('JOCL-BackEnd') {
-                    bat "docker build -t ${BACKEND_IMAGE}:${IMAGE_TAG} ."
+                    sh "docker build -t ${BACKEND_IMAGE}:${IMAGE_TAG} ."
                 }
             }
         }
@@ -58,7 +56,7 @@ pipeline {
             steps {
                 echo '🐳 Construction de l\'image Docker Frontend...'
                 dir('JOCL-FrontEnd') {
-                    bat "docker build -t ${FRONTEND_IMAGE}:${IMAGE_TAG} ."
+                    sh "docker build -t ${FRONTEND_IMAGE}:${IMAGE_TAG} ."
                 }
             }
         }
@@ -69,15 +67,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo '🚀 Lancement de l\'application avec Docker Compose...'
-                bat 'docker-compose down'
-                bat 'docker-compose up -d'
+                sh 'docker compose down || true'
+                sh 'docker compose up -d'
             }
         }
     }
 
-    // -----------------------------------------------
-    // Résultat final du pipeline
-    // -----------------------------------------------
     post {
         success {
             echo '✅ Pipeline réussi ! Application disponible sur http://localhost:4200'
