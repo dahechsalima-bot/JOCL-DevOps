@@ -66,7 +66,19 @@ pipeline {
         }
 
         // -----------------------------------------------
-        // ÉTAPE 3 : Construire l'image Docker du backend
+        // ÉTAPE 5 : Publier le .jar sur Nexus
+        // -----------------------------------------------
+        stage('Publish to Nexus') {
+            steps {
+                echo '📦 Publication du .jar sur Nexus Repository...'
+                dir('JOCL-BackEnd') {
+                    sh './mvnw deploy -DskipTests -s /var/jenkins_home/.m2/settings.xml'
+                }
+            }
+        }
+
+        // -----------------------------------------------
+        // ÉTAPE 6 : Construire l'image Docker du backend
         // -----------------------------------------------
         stage('Docker Build Backend') {
             steps {
