@@ -69,8 +69,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo '🚀 Lancement de l\'application avec Docker Compose...'
-                sh 'docker compose down || true'
-                sh 'docker compose up -d'
+                sh 'docker-compose down || true'
+                sh 'docker-compose up -d'
             }
         }
     }
