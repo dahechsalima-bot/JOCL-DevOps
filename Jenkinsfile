@@ -66,6 +66,32 @@ pipeline {
         }
 
         // -----------------------------------------------
+        // ÉTAPE 5 : Analyse qualité Frontend Angular
+        // -----------------------------------------------
+        stage('SonarQube Frontend') {
+            steps {
+                echo '🔍 Analyse de la qualité du code Angular...'
+                dir('JOCL-FrontEnd') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                            docker run --rm \
+                              --network jocl-pipeline_jocl-network \
+                              -e SONAR_HOST_URL=http://sonarqube:9000 \
+                              -e SONAR_TOKEN=$SONAR_AUTH_TOKEN \
+                              -v $(pwd):/usr/src \
+                              sonarsource/sonar-scanner-cli \
+                              -Dsonar.projectKey=JOCL-Frontend \
+                              -Dsonar.projectName="JOCL Frontend Angular" \
+                              -Dsonar.sources=src \
+                              -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts,**/dist/**" \
+                              -Dsonar.host.url=http://sonarqube:9000
+                        '''
+                    }
+                }
+            }
+        }
+
+        // -----------------------------------------------
         // ÉTAPE 5 : Publier le .jar sur Nexus
         // -----------------------------------------------
         stage('Publish to Nexus') {
