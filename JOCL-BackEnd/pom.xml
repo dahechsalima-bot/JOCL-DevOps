@@ -14,17 +14,8 @@
 	<name>jocl</name>
 	<description>jocl project for Spring Boot</description>
 
-	<!-- Configuration Nexus Repository -->
-	<distributionManagement>
-		<repository>
-			<id>nexus-releases</id>
-			<url>${nexus.url}</url>
-		</repository>
-	</distributionManagement>
-
 	<properties>
 		<java.version>21</java.version>
-		<nexus.url>http://localhost:8082/repository/jocl-releases/</nexus.url>
 	</properties>
 	<dependencies>
 		<dependency>
