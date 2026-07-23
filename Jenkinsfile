@@ -73,17 +73,17 @@ pipeline {
                 echo '🔍 Analyse de la qualité du code Angular...'
                 withSonarQubeEnv('SonarQube') {
                     sh '''
-                        FRONTEND_PATH=$WORKSPACE/JOCL-FrontEnd
                         docker run --rm \
                           --network jocl-pipeline_jocl-network \
                           -e SONAR_HOST_URL=http://sonarqube:9000 \
                           -e SONAR_TOKEN=$SONAR_AUTH_TOKEN \
-                          -v $FRONTEND_PATH:/usr/src \
+                          -v $WORKSPACE/JOCL-FrontEnd:/usr/src \
                           sonarsource/sonar-scanner-cli \
                           -Dsonar.projectKey=JOCL-Frontend \
                           -Dsonar.projectName="JOCL Frontend Angular" \
-                          -Dsonar.sources=/usr/src/src \
-                          -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts,**/dist/**" \
+                          -Dsonar.sources=. \
+                          -Dsonar.inclusions="src/**/*.ts,src/**/*.html" \
+                          -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts,**/dist/**,**/*.js" \
                           -Dsonar.host.url=http://sonarqube:9000
                     '''
                 }
